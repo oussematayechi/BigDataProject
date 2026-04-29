@@ -1,117 +1,124 @@
-🏥 IoT Patient Monitoring System (Big Data Project)
-📌 Overview
+# 🏥 IoT Patient Monitoring System – Big Data Pipeline
 
-This project implements a real-time IoT-based patient monitoring system using a modern Big Data pipeline. It simulates medical sensor data, streams it through distributed systems, processes it in real time, and triggers alerts when abnormal health conditions are detected.
+[![License](https://img.shields.io/badge/License-Academic%20Use-blue.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/Docker-24.0+-blue)](https://docker.com)
+[![Kafka](https://img.shields.io/badge/Kafka-3.5+-black)](https://kafka.apache.org)
+[![Spark](https://img.shields.io/badge/Spark-3.4+-orange)](https://spark.apache.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7.0+-green)](https://mongodb.com)
 
-The system is fully containerized using Docker and follows an end-to-end data pipeline architecture.
+## 📌 Overview
+Real-time IoT-based patient monitoring system using Kafka, Spark Streaming, and MongoDB. Simulates medical sensor data, detects anomalies, and triggers alerts.
 
-🎯 Objectives
-Build a complete Big Data pipeline
-Simulate IoT healthcare data
-Process streaming data using Apache Spark
-Store data in MongoDB
-Trigger real-time alerts based on thresholds
-🏗️ Architecture
-IoT Data Generator (Python)
-        ↓
-     Kafka (Streaming)
-        ↓
- Spark Streaming Processing
-        ↓
- ┌───────────────┬───────────────┐
- ↓                               ↓
-MongoDB (Storage)         Alert System (Kafka / Logs)
-🛠️ Tech Stack
-Apache Kafka – Data streaming
-Apache Spark – Real-time processing
-MongoDB – Data storage
-Docker & Docker Compose – Containerization
-Python – Data simulation & processing
-📂 Project Structure
+## 🎯 Objectives
+- Build a complete Big Data pipeline for healthcare IoT
+- Simulate realistic medical sensor data
+- Stream data using **Apache Kafka**
+- Process streaming data with **Apache Spark Structured Streaming**
+- Store historical data in **MongoDB**
+- Trigger **real‑time alerts** based on clinical thresholds
+
+## 🏗️ Architecture
+```
+IoT Data Generator (Python) → Kafka → Spark Streaming → MongoDB (Storage)
+                                                      → Alert System (Kafka/Logs)
+```
+
+## 🛠️ Tech Stack
+| Component | Technology |
+|-----------|-------------|
+| Stream Processing | Apache Spark 3.4 |
+| Message Broker | Apache Kafka 3.5 |
+| Storage | MongoDB 7.0 |
+| Containerization | Docker & Compose |
+| Simulation | Python 3.9+ |
+
+## 📂 Project Structure
+```
 iot-patient-monitoring/
-├── docker-compose.yml       # Container orchestration
-├── .env                     # Environment variables
-├── README.md                # Project documentation
-│
+├── docker-compose.yml
+├── .env
+├── README.md
 ├── data/
-│   ├── generate_data.py     # IoT data simulator
-│   └── patients.csv         # Sample dataset
-│
+│   ├── generate_data.py
+│   └── patients.csv
 ├── kafka/
-│   ├── init_topics.py       # Kafka topic creation
-│   ├── producer.py          # Data producer
-│   └── consumer.py          # Data consumer
-│
+│   ├── init_topics.py
+│   ├── producer.py
+│   └── consumer.py
 ├── spark/
-│   ├── Dockerfile           # Spark container config
-│   ├── spark_processor.py   # Streaming + alert logic
-│   └── requirements.txt     # Python dependencies
-│
+│   ├── Dockerfile
+│   ├── spark_processor.py
+│   └── requirements.txt
 ├── mongodb/
-│   ├── init_db.py           # Database initialization
-│   └── queries.js           # Useful queries
-│
+│   ├── init_db.py
+│   └── queries.js
 └── scripts/
-    ├── start.sh             # Start system
-    └── demo.sh              # Demo automation
-📊 Dataset
-Synthetic IoT patient data generated using Python
-Each record contains:
-timestamp
-patientId
-deviceId
-metric (HeartRate, Temperature, etc.)
-value
-unit
-⚙️ Installation & Setup
-1️⃣ Clone the repository
-git clone https://github.com/oussematayechi/BigDataProject.git
-cd BigDataProject
-2️⃣ Start Docker services
+    ├── start.sh
+    └── demo.sh
+```
+
+## 📊 Dataset (Synthetic)
+Each sensor record contains:
+- `timestamp` (ISO 8601)
+- `patientId`
+- `deviceId`
+- `metric` (HeartRate, Temperature, OxygenLevel, BloodPressure, RespiratoryRate)
+- `value` (float)
+- `unit`
+
+Generated at ~10 records/second.
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+- Docker ≥ 24.0
+- Docker Compose ≥ 2.20
+- Python 3.9+
+
+### Steps
+```bash
+git clone https://github.com/oussematayechi/BigDataProject
+cd iot-patient-monitoring
 docker-compose up -d
-3️⃣ Initialize Kafka topics
-python kafka/init_topics.py
-4️⃣ Start data producer
-python kafka/producer.py
-5️⃣ Run Spark Streaming job
-docker exec -it spark-container spark-submit spark/spark_processor.py
-🚨 Alert System
+docker exec -it kafka-broker python /kafka/init_topics.py
+docker exec -it mongodb python /mongodb/init_db.py
+docker exec -d kafka-broker python /kafka/producer.py
+docker exec -it spark-master spark-submit /spark/spark_processor.py
+```
 
-The system detects abnormal patient conditions based on thresholds:
+> 💡 Use `bash scripts/start.sh` to automate all steps.
 
-Metric	Normal	Warning	Critical
-HeartRate	60–100 bpm	<50 or >120	<40 or >150
-Temperature	36–37.2 °C	>38	>39.5 or <35
-Oxygen Level	95–100 %	<93	<90
-Blood Pressure	80–120 mmHg	>130	>180 or <70
-Respiratory Rate	12–20	<10 or >24	<8 or >30
+## 🚨 Alert System
+Thresholds for abnormal detection:
+
+| Metric | Normal | Warning | Critical |
+|--------|--------|---------|----------|
+| HeartRate | 60–100 bpm | <50 or >120 | <40 or >150 |
+| Temperature | 36–37.2 °C | >38 | >39.5 or <35 |
+| OxygenLevel | 95–100 % | <93 | <90 |
+| BloodPressure | 80–120 mmHg | >130 | >180 or <70 |
+| RespiratoryRate | 12–20 | <10 or >24 | <8 or >30 |
 
 Alerts are:
+- Stored in MongoDB `alerts` collection
+- Published to Kafka topic `alerts`
+- Printed in Spark logs
 
-Stored in MongoDB
-Sent to Kafka topics
-Logged in real time
-🗄️ MongoDB Collections
-patients
-sensor_readings
-devices
-▶️ Demo
+## 🗄️ MongoDB Collections
+- `patients` – registry of patients
+- `sensor_readings` – all historical telemetry
+- `alerts` – triggered anomalies
 
-Run the demo script:
-
+## ▶️ Demo
+```bash
 bash scripts/demo.sh
-📸 Screenshots (Optional)
+```
 
-Add screenshots of:
-
-Docker containers running
-Kafka messages
-MongoDB data
-Alerts
-👨‍💻 Author
-Oussema Tayechi et Jaziri Mohamed Ali
-Embedded Telecommunications Engineering Student
+## 👨‍💻 Author
+Oussema Tayechi & Mohamed Ali Jaziri
+*Embedded Telecommunications Engineering Student*
 ENISo – Tunisia 🇹🇳
-📜 License
 
-This project is for academic purposes .
+## 📜 License
+This project is for **academic purposes only**.
+© 2026
